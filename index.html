@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Mares — Diseñador de Contenido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FAFAF7;
+    --ink: #1A1A2E;
+    --ink-light: #3D3D5C;
+    --accent-blue: #2D6BE4;
+    --accent-sky: #5BB8F5;
+    --accent-green: #82C91E;
+    --accent-red: #E63946;
+    --accent-gold: #D4A017;
+    --sand: #E8DCC8;
+    --muted: #9B9B9B;
+    --border: rgba(26,26,46,0.08);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--ink);
+    font-family: var(--sans);
+    overflow-x: hidden;
+  }
+
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 24px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: transparent;
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(250,250,247,0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent-blue); }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent-blue); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: var(--cream);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(60px, 60px); }
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .hero-orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--accent-sky), transparent 70%);
+    top: -200px; right: -100px;
+    animation-delay: 0s;
+  }
+  .hero-orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, var(--accent-green), transparent 70%);
+    bottom: 0; left: 200px;
+    animation-delay: -3s;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(20px, -30px) scale(1.05); }
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+    position: relative; z-index: 2;
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent-blue);
+  }
+  .hero-subtitle {
+    font-family: var(--sans);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 32px;
+    max-width: 480px;
+    line-height: 1.7;
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px; right: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+    z-index: 2;
+  }
+  .hero-scroll span {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--accent-blue), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  .hero-stats {
+    display: flex; gap: 48px;
+    margin-top: 56px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* SECTION COMMONS */
+  section { position: relative; }
+  .section-pad { padding: 120px 48px; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--muted);
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .section-title em { font-style: italic; color: var(--accent-blue); }
+
+  /* ABOUT */
+  .about { background: var(--ink); color: var(--warm-white); }
+  .about .section-label { color: rgba(255,255,255,0.4); }
+  .about .section-label::before { background: rgba(255,255,255,0.3); }
+  .about .section-title { color: var(--cream); }
+  .about .section-title em { color: var(--accent-sky); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; margin-top: 64px; align-items: start;
+  }
+  .about-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.75);
+    font-weight: 300;
+  }
+  .about-text strong { color: var(--cream); font-weight: 500; }
+  .about-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .skill-item {
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .skill-item:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+  }
+  .skill-name {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-sky);
+    margin-bottom: 6px;
+  }
+  .skill-desc {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+
+  /* PROJECTS */
+  .projects { background: var(--warm-white); }
+  .projects-intro {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: end;
+    margin-bottom: 80px;
+  }
+  .projects-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--ink-light);
+    font-weight: 300;
+  }
+
+  /* BRAND CASES */
+  .brand-case {
+    margin-bottom: 120px;
+  }
+
+  .brand-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .brand-category {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .cat-luxury { background: rgba(45,107,228,0.1); color: var(--accent-blue); }
+  .cat-security { background: rgba(230,57,70,0.1); color: var(--accent-red); }
+
+  .brand-name {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .brand-tagline {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+  .brand-year {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* GALLERY GRID */
+  .gallery-luxury,
+  .gallery-security {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .img-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--sand);
+    cursor: pointer;
+  }
+  .img-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .img-card:hover img { transform: scale(1.05); }
+
+  .img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,26,46,0.7) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    display: flex; align-items: flex-end; padding: 20px;
+  }
+  .img-card:hover .img-overlay { opacity: 1; }
+  .overlay-text {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* BRAND INSIGHT */
+  .brand-insight {
+    margin-top: 48px;
+    padding: 40px 48px;
+    background: var(--cream);
+    border-left: 3px solid var(--accent-blue);
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .brand-case:last-of-type .brand-insight {
+    border-left-color: var(--accent-red);
+  }
+  .insight-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .insight-value {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* PROCESS */
+  .process { background: var(--cream); }
+  .process-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-top: 64px;
+  }
+  .process-step {
+    padding: 40px 32px;
+    background: var(--warm-white);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .process-step::before {
+    content: attr(data-num);
+    font-family: var(--serif);
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--border);
+    position: absolute;
+    top: -20px; right: -10px;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .process-step:hover { background: var(--ink); }
+  .process-step:hover .process-title,
+  .process-step:hover .process-desc { color: var(--cream); }
+  .process-step:hover::before { color: rgba(255,255,255,0.05); }
+
+  .process-icon {
+    width: 40px; height: 40px;
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+  .process-title {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+    transition: color 0.3s;
+  }
+  .process-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--ink-light);
+    position: relative; z-index: 1;
+    transition: color 0.3s;
+    font-weight: 300;
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    background: var(--ink);
+    padding: 24px 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 24px;
+    padding: 0 24px;
+  }
+  .marquee-item span {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.2);
+    font-weight: 400;
+  }
+  .marquee-item .dot {
+    width: 5px; height: 5px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* CONTACT */
+  .contact { background: var(--warm-white); }
+  .contact-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: start;
+    margin-top: 64px;
+  }
+  .contact-big {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .contact-big em { font-style: italic; color: var(--accent-blue); }
+  .contact-links { display: flex; flex-direction: column; gap: 16px; margin-top: 48px; }
+  .contact-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .contact-link::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--ink);
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 0;
+  }
+  .contact-link:hover::before { transform: translateX(0); }
+  .contact-link:hover .link-text,
+  .contact-link:hover .link-arrow { color: var(--cream); }
+  .link-text {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+    transition: color 0.3s;
+  }
+  .link-type {
+    font-size: 0.75rem;
+    color: var(--muted);
+    position: relative; z-index: 1;
+  }
+  .link-arrow {
+    font-size: 1.2rem;
+    color: var(--ink-light);
+    position: relative; z-index: 1;
+    transition: color 0.3s, transform 0.3s;
+  }
+  .contact-link:hover .link-arrow { transform: translateX(4px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 40px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.4);
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* WEB PROJECT SECTION */
+  .web-project {
+    background: var(--ink);
+    padding: 120px 48px;
+  }
+  .web-project .section-label { color: rgba(255,255,255,0.35); }
+  .web-project .section-label::before { background: rgba(255,255,255,0.25); }
+  .web-project .section-title { color: var(--cream); }
+  .web-project .section-title em { color: var(--accent-sky); }
+
+  .web-project-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 64px;
+  }
+
+  .web-project-meta {
+    position: sticky;
+    top: 100px;
+  }
+
+  .web-client-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px;
+    background: rgba(91,184,245,0.08);
+    border: 1px solid rgba(91,184,245,0.2);
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .web-client-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-sky);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .web-client-name {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-sky);
+  }
+
+  .web-title {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .web-project-desc {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: rgba(245,240,232,0.55);
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+  .web-project-desc strong { color: rgba(245,240,232,0.85); font-weight: 500; }
+
+  .web-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .web-tag {
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.4);
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .web-tag:hover { border-color: var(--accent-sky); color: var(--accent-sky); }
+
+  .web-divider {
+    width: 100%; height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 32px 0;
+  }
+
+  .web-deliverable-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 16px;
+  }
+  .web-deliverables { display: flex; flex-direction: column; gap: 10px; }
+  .web-deliverable {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.88rem;
+    color: rgba(245,240,232,0.6);
+  }
+  .web-deliverable::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--accent-sky);
+    flex-shrink: 0;
+  }
+
+  /* BROWSER MOCKUP STACK */
+  .browser-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .browser-mockup {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+    background: #12121E;
+  }
+
+  .browser-bar {
+    background: #1E1E2E;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-red { background: #FF5F57; }
+  .dot-yellow { background: #FEBC2E; }
+  .dot-green { background: #28C840; }
+  .browser-url {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.04em;
+  }
+
+  .browser-img {
+    width: 100%; display: block;
+    object-fit: cover;
+    object-position: top;
+    max-height: 280px;
+    transition: max-height 0.4s ease;
+  }
+  .browser-mockup:hover .browser-img { max-height: 500px; }
+
+  .browser-screen-label {
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--warm-white); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 2px; }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 24px 60px; }
+    .section-pad { padding: 80px 24px; }
+    .about-grid, .projects-intro, .contact-inner, .web-project-inner { grid-template-columns: 1fr; gap: 40px; }
+    .gallery-luxury, .gallery-security { grid-template-columns: 1fr 1fr; }
+    .brand-insight { grid-template-columns: 1fr; gap: 20px; }
+    .process-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">David <span>Mares</span></a>
+  <ul class="nav-links">
+    <li><a href="#projects">Parrillas</a></li>
+    <li><a href="#web">Web</a></li>
+    <li><a href="#process">Proceso</a></li>
+    <li><a href="#about">Perfil</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+
+  <div class="hero-tag">Diseñador Web · Landing pages · Contenido digital · México</div>
+  <h1 class="hero-name">David<br><em>Mares.</em></h1>
+  <p class="hero-subtitle">Diseñador Web especializado en landing pages, mantenimiento web y parrillas de contenido para redes sociales. Soluciones visuales alineadas a objetivos comerciales.</p>
+
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">3</div>
+      <div class="stat-label">Industrias</div>
+    </div>
+    <div>
+      <div class="stat-num">HTML/CSS</div>
+      <div class="stat-label">Desarrollo web</div>
+    </div>
+    <div>
+      <div class="stat-num">Figma</div>
+      <div class="stat-label">Diseño UI</div>
+    </div>
+    <div>
+      <div class="stat-num">Adobe</div>
+      <div class="stat-label">Ps · Ai</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <!-- duplicated for seamless loop -->
+    <div class="marquee-item"><span>Diseño de Parrilla</span><div class="dot"></div></div>
+    <div class="marquee-item"><span>Contenido Social</span><div class="dot"></div></div>
+    <div class="marquee-item"><span>Branding Corporativo</span><div class="dot"></div></div>
+    <div class="marquee-item"><span>Diseño de Parrilla</span><div class="dot"></div></div>
+    <div class="marquee-item"><span>Contenido Social</span><div class="dot"></div></div>
+    <div class="marquee-item"><span>Branding Corporativo</span><div class="dot"></div></div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section class="projects section-pad" id="projects">
+  <div class="projects-intro">
+    <div>
+      <div class="section-label">Proyectos</div>
+      <h2 class="section-title">Parrillas que<br>cuentan <em>historias.</em></h2>
+    </div>
+    <p class="projects-desc">
+      Trabajo con marcas del mismo grupo empresarial — adaptando la identidad visual de cada una a sus objetivos y audiencias, sin perder coherencia de sistema. Aquí el resultado habla por sí mismo.
+    </p>
+  </div>
+
+  <!-- AX TRANSPORTER -->
+  <div class="brand-case" id="ax-case">
+    <div class="brand-header">
+      <div>
+        <div class="brand-category cat-luxury">✦ Turismo de lujo · Caribe Mexicano</div>
+        <h3 class="brand-name">AX Transporter</h3>
+        <p class="brand-tagline">Vuelos privados · Cancún · Holbox · Cozumel · Parrilla bilingüe</p>
+      </div>
+      <div class="brand-year">2025 — presente</div>
+    </div>
+
+    <div class="gallery-luxury">
+      <div class="img-card tall">
+        <img src="img/AX1.png">
+        <div class="img-overlay"><span class="overlay-text">Porque tu tiempo es oro</span></div>
+      </div>
+      <div class="img-card">
+        <img src="img/AX2.png">
+        <div class="img-overlay"><span class="overlay-text">The way you arrive</span></div>
+      </div>
+      <div class="img-card">
+        <img src="img/Parrilla_AX.jpeg">
+        <div class="img-overlay"><span class="overlay-text">Vista de parrilla</span></div>
+      </div>
+    </div>
+
+    <div class="brand-insight">
+      <div>
+        <div class="insight-label">Tono de voz</div>
+        <div class="insight-value">Aspiracional, cálido, aventurero — sin excesos</div>
+      </div>
+      <div>
+        <div class="insight-label">Sistema visual</div>
+        <div class="insight-value">Curvas orgánicas azul-verde sobre fotografías de destino</div>
+      </div>
+      <div>
+        <div class="insight-label">Resultado</div>
+        <div class="insight-value">Parrilla bilingüe con personalidad definida y cohesión total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSI -->
+  <div class="brand-case" id="gsi-case">
+    <div class="brand-header">
+      <div>
+        <div class="brand-category cat-security">◈ Seguridad privada · B2B Corporativo</div>
+        <h3 class="brand-name">GSI Seguridad Privada</h3>
+        <p class="brand-tagline">Seguridad física · Control de acceso · Cobertura nacional</p>
+      </div>
+      <div class="brand-year">2025 — presente</div>
+    </div>
+
+    <div class="gallery-security">
+      <div class="img-card">
+        <img src="img/GSI1.png" alt="GSI - 23 años de experiencia" loading="lazy">
+        <div class="img-overlay"><span class="overlay-text">23 años de experiencia</span></div>
+      </div>
+      <div class="img-card">
+        <img src="img/Parrilla_GSI.jpeg" alt="GSI - Parrilla" loading="lazy" style="object-position: top;">
+        <div class="img-overlay"><span class="overlay-text">Vista de parrilla</span></div>
+      </div>
+      <div class="img-card tall">
+        <img src="img/GSI3.png" alt="GSI - Servicios" loading="lazy" style="object-position: 0 -100px;">
+        <div class="img-overlay"><span class="overlay-text">Presencia institucional</span></div>
+      </div>
+    </div>
+
+    <div class="brand-insight">
+      <div>
+        <div class="insight-label">Tono de voz</div>
+        <div class="insight-value">Firme, confiable, institucional — orientado a decisión</div>
+      </div>
+      <div>
+        <div class="insight-label">Sistema visual</div>
+        <div class="insight-value">Rojo intenso + blanco + ola dinámica. Autoridad visual</div>
+      </div>
+      <div>
+        <div class="insight-label">Resultado</div>
+        <div class="insight-value">Comunicación que genera confianza en mercados B2B</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEB PROJECT: CENTRAL DE ALARMAS -->
+<section class="web-project" id="web">
+  <div class="section-label">Diseño web</div>
+  <h2 class="section-title">Más allá de la parrilla:<br><em>producto digital.</em></h2>
+
+  <div class="web-project-inner">
+    <!-- META LEFT -->
+    <div class="web-project-meta">
+      <div class="web-client-badge">
+        <div class="web-client-dot"></div>
+        <span class="web-client-name">Central de Alarmas</span>
+      </div>
+      <h3 class="web-title">Landing page corporativa como CV de marca</h3>
+      <p class="web-project-desc">
+        Diseño de una <strong>landing page institucional</strong> para Central de Alarmas, empresa mexicana líder en soluciones tecnológicas de seguridad. El reto: comunicar décadas de experiencia, certificaciones internacionales y confianza corporativa en una sola página que funcione como tarjeta de presentación digital.
+      </p>
+      <p class="web-project-desc">
+        La página integra identidad de marca sólida, arquitectura de información clara y un sistema visual que transmite <strong>autoridad, tecnología y cercanía</strong> al mismo tiempo.
+      </p>
+
+      <div class="web-tags">
+        <span class="web-tag">Diseño UI</span>
+        <span class="web-tag">Landing page</span>
+        <span class="web-tag">Identidad corporativa</span>
+        <span class="web-tag">Seguridad B2B</span>
+        <span class="web-tag">Arquitectura de info</span>
+      </div>
+
+      <div class="web-divider"></div>
+
+      <div class="web-deliverable-label">Entregables del proyecto</div>
+      <div class="web-deliverables">
+        <div class="web-deliverable">Diseño de landing page completa</div>
+        <div class="web-deliverable">Sección de certificaciones y distintivos</div>
+        <div class="web-deliverable">CTA de contacto multicanal</div>
+        <div class="web-deliverable">Presentación de identidad de marca</div>
+      </div>
+    </div>
+
+    <!-- MOCKUP STACK RIGHT -->
+    <div class="browser-stack">
+      <div class="browser-mockup">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot dot-red"></div>
+            <div class="browser-dot dot-yellow"></div>
+            <div class="browser-dot dot-green"></div>
+          </div>
+          <div class="browser-url">centraldealarmas.com.mx — Inicio</div>
+        </div>
+        <img class="browser-img" src="img/CV1.png" alt="Central de Alarmas - Hero" loading="lazy">
+        <div class="browser-screen-label">↑ Hero · Identidad de marca</div>
+      </div>
+
+      <div class="browser-mockup">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot dot-red"></div>
+            <div class="browser-dot dot-yellow"></div>
+            <div class="browser-dot dot-green"></div>
+          </div>
+          <div class="browser-url">centraldealarmas.com.mx — Certificaciones</div>
+        </div>
+        <img class="browser-img" src="img/CV2.png" alt="Central de Alarmas - Certificaciones" loading="lazy">
+        <div class="browser-screen-label">↑ Certificaciones · Lean 6σ · Notifier · SEPROBAN · ALAS</div>
+      </div>
+
+      <div class="browser-mockup">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot dot-red"></div>
+            <div class="browser-dot dot-yellow"></div>
+            <div class="browser-dot dot-green"></div>
+          </div>
+          <div class="browser-url">centraldealarmas.com.mx — Contacto</div>
+        </div>
+        <img class="browser-img" src="img/CV3.png" alt="Central de Alarmas - Contacto" loading="lazy">
+        <div class="browser-screen-label">↑ Contacto · CTA multicanal · Footer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process section-pad" id="process">
+  <div class="section-label">Proceso de diseño</div>
+  <h2 class="section-title">Detrás de cada<br>pieza hay <em>método.</em></h2>
+
+  <div class="process-grid">
+    <div class="process-step" data-num="01">
+      <svg class="process-icon" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="var(--accent-blue)" stroke-width="1.5"/>
+        <path d="M12 20 L20 12 L28 20 L20 28 Z" stroke="var(--accent-blue)" stroke-width="1.5"/>
+      </svg>
+      <div class="process-title">Investigación de marca</div>
+      <div class="process-desc">Entiendo el negocio, la audiencia, los valores. Sin este paso, el diseño no comunica — solo decora.</div>
+    </div>
+    <div class="process-step" data-num="02">
+      <svg class="process-icon" viewBox="0 0 40 40" fill="none">
+        <rect x="6" y="6" width="28" height="28" stroke="var(--accent-blue)" stroke-width="1.5"/>
+        <line x1="6" y1="20" x2="34" y2="20" stroke="var(--accent-blue)" stroke-width="1"/>
+        <line x1="20" y1="6" x2="20" y2="34" stroke="var(--accent-blue)" stroke-width="1"/>
+      </svg>
+      <div class="process-title">Arquitectura visual</div>
+      <div class="process-desc">Defino jerarquía, paleta, tipografías y el sistema de elementos gráficos que dan identidad a la parrilla.</div>
+    </div>
+    <div class="process-step" data-num="03">
+      <svg class="process-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M8 32 Q14 8 20 20 Q26 32 32 8" stroke="var(--accent-blue)" stroke-width="1.5" fill="none"/>
+        <circle cx="20" cy="20" r="3" fill="var(--accent-blue)"/>
+      </svg>
+      <div class="process-title">Producción de contenido</div>
+      <div class="process-desc">Diseño pieza por pieza, asegurando que cada post tenga coherencia con la identidad y un gancho visual claro.</div>
+    </div>
+    <div class="process-step" data-num="04">
+      <svg class="process-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M10 20 L18 28 L30 12" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="process-title">Entrega y ajuste</div>
+      <div class="process-desc">Presentación en contexto real, revisión de parrilla completa y refinamiento hasta que la marca se vea impecable.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about section-pad" id="about">
+  <div class="section-label">Perfil</div>
+  <h2 class="section-title">Diseño con<br><em>intención.</em></h2>
+
+  <div class="about-grid">
+    <div>
+      <p class="about-text">
+        Soy <strong>David Mares</strong>, Diseñador Web con experiencia en creación de contenido visual para entornos digitales. Me especializo en el <strong>desarrollo de landing pages, mantenimiento web</strong> y diseño de artes para parrillas de contenido en redes sociales.
+      </p>
+      <br>
+      <p class="about-text">
+        Cuento con gran capacidad de adaptabilidad, trabajo en equipo y autogestión, lo que me permite resolver problemas de manera eficiente. Destaco por mi <strong>pensamiento crítico, comunicación efectiva y creatividad</strong>, aportando soluciones visuales estratégicas alineadas a objetivos comerciales.
+      </p>
+      <br>
+      <p class="about-text">
+        Actualmente trabajo como <strong>Diseñador Web en GSI · Central de Alarmas</strong>, donde diseño y desarrollo landing pages, gestiono parrillas de contenido para redes sociales y adapto la identidad visual a múltiples formatos digitales e impresos.
+      </p>
+    </div>
+    <div class="about-skills">
+      <div class="skill-item">
+        <div class="skill-name">Diseño web</div>
+        <div class="skill-desc">Landing pages, mantenimiento y desarrollo frontend con HTML, CSS y JS</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Parrilla editorial</div>
+        <div class="skill-desc">Diseño de contenido para redes sociales con identidad visual cohesiva</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Adobe & Figma</div>
+        <div class="skill-desc">Photoshop, Illustrator y Figma para diseño de interfaces y artes digitales</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Identidad visual</div>
+        <div class="skill-desc">Adaptación de marca a posts, banners, historias, pop-ups y piezas impresas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact section-pad" id="contact">
+  <div class="section-label">Contacto</div>
+
+  <div class="contact-inner">
+    <div>
+      <div class="contact-big">
+        Listo para hablar de tu próximo proyecto?
+        <br><em>Hablemos.</em>
+      </div>
+      <div style="margin-top:48px; padding-top:40px; border-top:1px solid var(--border);">
+        <div class="section-label" style="margin-bottom:20px;">Experiencia</div>
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div>
+            <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Mayo 2025 — Actualmente</div>
+            <div style="font-weight:500;font-size:0.95rem;">Diseñador Web</div>
+            <div style="font-size:0.85rem;color:var(--ink-light);font-weight:300;">GSI · Central de Alarmas</div>
+          </div>
+          <div>
+            <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Nov 2023 — Dic 2024</div>
+            <div style="font-weight:500;font-size:0.95rem;">Fundador &amp; Diseñador</div>
+            <div style="font-size:0.85rem;color:var(--ink-light);font-weight:300;">Taller de Diseño PIMO</div>
+          </div>
+          <div>
+            <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Nov 2021 — Abr 2024</div>
+            <div style="font-weight:500;font-size:0.95rem;">Dibujante Cadista</div>
+            <div style="font-size:0.85rem;color:var(--ink-light);font-weight:300;">Core-Tech</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-links">
+      <a href="mailto:david.mesval@gmail.com" class="contact-link">
+        <div>
+          <div class="link-text">david.mesval@gmail.com</div>
+          <div class="link-type">Email</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+      <a href="tel:+527226784165" class="contact-link">
+        <div>
+          <div class="link-text">+52 72 2678 4165</div>
+          <div class="link-type">Teléfono / WhatsApp</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+      <div style="margin-top:8px; padding:20px 28px; border:1px solid var(--border);">
+        <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Herramientas</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">HTML / CSS</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">JavaScript</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">Figma</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">Photoshop</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">Illustrator</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">AutoCAD</span>
+          <span style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.06em;padding:4px 10px;border:1px solid var(--border);color:var(--ink-light);border-radius:2px;">Python</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name">Pedro David Mares Valverde</div>
+  <div class="footer-copy">© 2026 — Diseñador Web</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // NAV SCROLL
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // INTERSECTION OBSERVER
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('
